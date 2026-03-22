@@ -1,0 +1,337 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String?
+  email     String   @unique
+  password  String
+  role      String   @default("EDITOR") // ADMIN, EDITOR, DEPT_HEAD
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Department {
+  id           String    @id @default(cuid())
+  name         String    @unique
+  slug         String    @unique
+  description  String?
+  image        String?
+  functions    String?   // JSON or text list
+  mandate      String?
+  headName     String?
+  headImage    String?
+  headBio      String?
+  contactEmail String?
+  contactPhone String?
+  achievements String?   // JSON array
+  staff        String?   // JSON array
+  services     Service[]
+  projects     Project[]
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model Service {
+  id           String     @id @default(cuid())
+  title        String
+  description  String
+  requirements String?
+  departmentId String
+  department   Department @relation(fields: [departmentId], references: [id])
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+model Project {
+  id           String     @id @default(cuid())
+  title        String
+  description  String
+  status       String     // ONGOING, COMPLETED, UPCOMING
+  icon         String     @default("Droplets")
+  image        String?    // Main project image
+  location     String?
+  budget       String?
+  timeline     String?
+  progress     Int?       // Percentage 0-100
+  order        Int        @default(0)
+  active       Boolean    @default(true)
+  departmentId String?
+  department   Department? @relation(fields: [departmentId], references: [id])
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@index([active, status, order])
+  @@index([departmentId])
+}
+
+model Tender {
+  id          String   @id @default(cuid())
+  title       String
+  category    String
+  status      String   @default("OPEN") // OPEN, CLOSED, AWARDED
+  budget      String?
+  deadline    DateTime
+  documentUrl String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([status, deadline])
+}
+
+model Job {
+  id          String   @id @default(cuid())
+  title       String
+  type        String   // FULL_TIME, CONTRACT
+  description String
+  requirements String?
+  closingDate DateTime
+  documentUrl String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([closingDate])
+}
+
+model News {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  category  String   // NEWS, EVENT, ANNOUNCEMENT
+  image     String?  // First/featured image (for backward compatibility)
+  images    String?  // JSON array of multiple images
+  published Boolean  @default(true)
+  date      DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([published, date])
+  @@index([category])
+}
+
+model Leadership {
+  id        String   @id @default(cuid())
+  name      String
+  position  String
+  image     String
+  bio       String?
+  email     String?
+  phone     String?
+  order     Int      @default(0) // For sorting
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([active, order])
+}
+
+model Media {
+  id        String   @id @default(cuid())
+  title     String
+  type      String   // IMAGE, VIDEO
+  category  String   // LEADERSHIP, PROJECTS, EVENTS, INFRASTRUCTURE, OTHER
+  url       String
+  fileSize  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Policy {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  category    String
+  fileUrl     String
+  fileSize    String?
+  publishedAt DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Event {
+  id              String   @id @default(cuid())
+  title           String
+  description     String
+  category        String   // CONFERENCE, WORKSHOP, FORUM, TRAINING, LAUNCH
+  startDate       DateTime
+  endDate         DateTime?
+  location        String?
+  venue           String?
+  image           String?
+  registrationUrl String?
+  status          String   @default("UPCOMING") // UPCOMING, ONGOING, COMPLETED, CANCELLED
+  published       Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([published, startDate])
+  @@index([status])
+}
+
+model OnlineService {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  category    String   // REGISTRATION, LICENSE, APPLICATION, FORM
+  requirements String?
+  formUrl     String?
+  documentUrl String?
+  icon        String?
+  order       Int      @default(0)
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([active, order])
+}
+
+model Application {
+  id            String   @id @default(cuid())
+  serviceId     String
+  applicantName String
+  email         String
+  phone         String
+  data          String   // JSON data
+  status        String   @default("PENDING") // PENDING, UNDER_REVIEW, APPROVED, REJECTED
+  trackingCode  String   @unique
+  submittedAt   DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Course {
+  id           String    @id @default(cuid())
+  title        String
+  description  String
+  duration     String    // e.g., "6 months", "2 weeks"
+  level        String    // CERTIFICATE, DIPLOMA, SHORT_TERM, TOT
+  category     String    // O&M, IWRM, TECHNICAL, MANAGEMENT
+  requirements String?
+  curriculum   String?
+  image        String?
+  startDate    DateTime?
+  endDate      DateTime?
+  capacity     Int?
+  enrolled     Int       @default(0)
+  status       String    @default("ACTIVE") // ACTIVE, UPCOMING, COMPLETED
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model Resource {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  category    String   // POLICY, RESEARCH, REPORT, GUIDELINE, MAP, STATISTICAL
+  fileUrl     String
+  fileSize    String?
+  fileType    String?  // PDF, DOC, XLS, etc.
+  thumbnail   String?
+  downloads   Int      @default(0)
+  publishedAt DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Statistic {
+  id        String   @id @default(cuid())
+  title     String
+  value     String
+  unit      String?
+  category  String?
+  icon      String?
+  order     Int      @default(0)
+  active    Boolean  @default(true)
+  year      Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([active, order])
+}
+
+model Partner {
+  id          String   @id @default(cuid())
+  name        String
+  logo        String
+  website     String?
+  category    String?
+  order       Int      @default(0)
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([active, order])
+}
+
+model FAQ {
+  id        String   @id @default(cuid())
+  question  String
+  answer    String
+  category  String   // GENERAL, SERVICES, PROJECTS, CAREERS
+  order     Int      @default(0)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([active, category, order])
+}
+
+model Feedback {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  subject   String
+  message   String
+  type      String   // COMPLAINT, SUGGESTION, INQUIRY, COMPLIMENT
+  status    String   @default("NEW") // NEW, REVIEWED, RESOLVED
+  response  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model QuickLink {
+  id        String   @id @default(cuid())
+  title     String
+  href      String
+  icon      String   @default("FileText")
+  order     Int      @default(0)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([active, order])
+}
+
+model HeroSlide {
+  id         String   @id @default(cuid())
+  title      String
+  subtitle   String?
+  image      String
+  buttonText String?
+  buttonLink String?
+  order      Int      @default(0)
+  active     Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([active, order])
+}
+
+model FeaturedVideo {
+  id         String   @id @default(cuid())
+  title      String
+  youtubeId  String
+  thumbnail  String?
+  order      Int      @default(0)
+  active     Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([active, order])
+}
