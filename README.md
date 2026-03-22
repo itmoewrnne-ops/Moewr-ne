@@ -10,7 +10,7 @@ This is the official website system for the Ministry of Water, Energy, and Natur
 ## Tech Stack
 
 - **Framework**: Next.js 14
-- **Database**: SQLite (Prisma ORM)
+- **Database**: PostgreSQL (Prisma ORM)
 - **Styling**: Tailwind CSS
 - **Icons**: Lucide React
 
@@ -49,7 +49,7 @@ chmod +x setup-local.sh
 
 3.  **Create `.env` file** in project root:
     ```env
-    DATABASE_URL="file:./prisma/dev.db"
+    DATABASE_URL="postgresql://user:password@host:5432/db"
     JWT_SECRET="your-random-secret-key-minimum-32-characters-long"
     ```
 
@@ -65,6 +65,14 @@ chmod +x setup-local.sh
 ## Admin Access
 
 The seed script (`prisma/seed.ts`) creates a default admin user. Credentials are defined in the seed file – run `npx prisma db seed` after setup to create the admin account.
+
+## Deploy (Vercel)
+
+See [VERCEL_SETUP.md](./VERCEL_SETUP.md) for free deployment.
+
+## Clone (cPanel)
+
+If clone fails: make repo **Public** (GitHub → Settings → Change visibility).
 
 ## Project Structure
 
