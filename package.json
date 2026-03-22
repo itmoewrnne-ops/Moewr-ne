@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbo",
-    "build": "echo 'DATABASE_URL='$DATABASE_URL && mkdir -p /app/public/uploads/data && chmod 755 /app/public/uploads/data && prisma migrate deploy && prisma generate && next build",
+    "build": "prisma generate && next build",
     "start": "node scripts/init-db.js && next start",
     "lint": "eslint"
   },
