@@ -64,9 +64,7 @@ chmod +x setup-local.sh
 
 ## Admin Access
 
-The seed script creates a default admin user:
-- **Email**: `admin@mow.gov`
-- **Password**: `password123` (Note: Auth logic is currently simplified)
+The seed script (`prisma/seed.ts`) creates a default admin user. Credentials are defined in the seed file – run `npx prisma db seed` after setup to create the admin account.
 
 ## Project Structure
 

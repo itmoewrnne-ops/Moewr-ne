@@ -1,0 +1,34 @@
+========================================
+  SIDA LOO UPLOAD GAREEYO CPANEL
+  https://cpanel.moewr-ne.so/
+========================================
+
+1. GALI CPANEL
+   - Fur browser
+   - URL: https://cpanel.moewr-ne.so/
+   - Username + Password geli
+   - Sign in
+
+2. FUR FILE MANAGER
+   - Ka soco "Files" section
+   - Taabo "File Manager"
+
+3. SOCO public_html
+   - Click "public_html" folder
+   - Haddii index.html hore jiro → Delete ama Rename (sida index-old.html)
+
+4. UPLOAD index.html
+   - Taabo "Upload"
+   - Dooro UPLOAD_TO_CPANEL/index.html (file-kan folder-ka)
+   - Sug inuu upload dhammaado
+
+5. HUBI
+   - Hubi in index.html ku jiro public_html
+   - Fur https://moewr-ne.so (ka dib DNS la beddelay)
+
+========================================
+  MUHIIM: DNS
+  Haddii moewr-ne.so weli Railway tusayo (404),
+  waa inaad DNS u beddelaa si uu u tuso cPanel.
+  Weydii Recent IT: "What IP for A record?"
+========================================

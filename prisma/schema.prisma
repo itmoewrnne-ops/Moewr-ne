@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -12,7 +12,7 @@ model User {
   name      String?
   email     String   @unique
   password  String
-  role      String   @default("EDITOR") // ADMIN, EDITOR, DEPT_HEAD
+  role      String   @default("EDITOR")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -23,15 +23,15 @@ model Department {
   slug         String    @unique
   description  String?
   image        String?
-  functions    String?   // JSON or text list
+  functions    String?
   mandate      String?
   headName     String?
   headImage    String?
   headBio      String?
   contactEmail String?
   contactPhone String?
-  achievements String?   // JSON array
-  staff        String?   // JSON array
+  achievements String?
+  staff        String?
   services     Service[]
   projects     Project[]
   createdAt    DateTime  @default(now())
@@ -53,20 +53,19 @@ model Project {
   id           String     @id @default(cuid())
   title        String
   description  String
-  status       String     // ONGOING, COMPLETED, UPCOMING
+  status       String
   icon         String     @default("Droplets")
-  image        String?    // Main project image
+  image        String?
   location     String?
   budget       String?
   timeline     String?
-  progress     Int?       // Percentage 0-100
+  progress     Int?
   order        Int        @default(0)
   active       Boolean    @default(true)
   departmentId String?
   department   Department? @relation(fields: [departmentId], references: [id])
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
-
   @@index([active, status, order])
   @@index([departmentId])
 }
@@ -75,27 +74,24 @@ model Tender {
   id          String   @id @default(cuid())
   title       String
   category    String
-  status      String   @default("OPEN") // OPEN, CLOSED, AWARDED
+  status      String   @default("OPEN")
   budget      String?
   deadline    DateTime
   documentUrl String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-
-  @@index([status, deadline])
 }
 
 model Job {
-  id          String   @id @default(cuid())
+  id           String   @id @default(cuid())
   title       String
-  type        String   // FULL_TIME, CONTRACT
+  type        String
   description String
   requirements String?
-  closingDate DateTime
-  documentUrl String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
+  closingDate  DateTime
+  documentUrl  String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
   @@index([closingDate])
 }
 
@@ -103,14 +99,13 @@ model News {
   id        String   @id @default(cuid())
   title     String
   content   String
-  category  String   // NEWS, EVENT, ANNOUNCEMENT
-  image     String?  // First/featured image (for backward compatibility)
-  images    String?  // JSON array of multiple images
+  category  String
+  image     String?
+  images    String?
   published Boolean  @default(true)
   date      DateTime @default(now())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
   @@index([published, date])
   @@index([category])
 }
@@ -123,19 +118,18 @@ model Leadership {
   bio       String?
   email     String?
   phone     String?
-  order     Int      @default(0) // For sorting
+  order     Int      @default(0)
   active    Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
   @@index([active, order])
 }
 
 model Media {
   id        String   @id @default(cuid())
   title     String
-  type      String   // IMAGE, VIDEO
-  category  String   // LEADERSHIP, PROJECTS, EVENTS, INFRASTRUCTURE, OTHER
+  type      String
+  category  String
   url       String
   fileSize  String?
   createdAt DateTime @default(now())
@@ -158,36 +152,34 @@ model Event {
   id              String   @id @default(cuid())
   title           String
   description     String
-  category        String   // CONFERENCE, WORKSHOP, FORUM, TRAINING, LAUNCH
+  category        String
   startDate       DateTime
   endDate         DateTime?
   location        String?
   venue           String?
   image           String?
   registrationUrl String?
-  status          String   @default("UPCOMING") // UPCOMING, ONGOING, COMPLETED, CANCELLED
+  status          String   @default("UPCOMING")
   published       Boolean  @default(true)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
-
   @@index([published, startDate])
   @@index([status])
 }
 
 model OnlineService {
-  id          String   @id @default(cuid())
-  title       String
-  description String
-  category    String   // REGISTRATION, LICENSE, APPLICATION, FORM
+  id           String   @id @default(cuid())
+  title        String
+  description  String
+  category     String
   requirements String?
-  formUrl     String?
-  documentUrl String?
-  icon        String?
-  order       Int      @default(0)
-  active      Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
+  formUrl      String?
+  documentUrl  String?
+  icon         String?
+  order        Int      @default(0)
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
   @@index([active, order])
 }
 
@@ -197,8 +189,8 @@ model Application {
   applicantName String
   email         String
   phone         String
-  data          String   // JSON data
-  status        String   @default("PENDING") // PENDING, UNDER_REVIEW, APPROVED, REJECTED
+  data          String
+  status        String   @default("PENDING")
   trackingCode  String   @unique
   submittedAt   DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -208,9 +200,9 @@ model Course {
   id           String    @id @default(cuid())
   title        String
   description  String
-  duration     String    // e.g., "6 months", "2 weeks"
-  level        String    // CERTIFICATE, DIPLOMA, SHORT_TERM, TOT
-  category     String    // O&M, IWRM, TECHNICAL, MANAGEMENT
+  duration     String
+  level        String
+  category     String
   requirements String?
   curriculum   String?
   image        String?
@@ -218,7 +210,7 @@ model Course {
   endDate      DateTime?
   capacity     Int?
   enrolled     Int       @default(0)
-  status       String    @default("ACTIVE") // ACTIVE, UPCOMING, COMPLETED
+  status       String    @default("ACTIVE")
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 }
@@ -227,10 +219,10 @@ model Resource {
   id          String   @id @default(cuid())
   title       String
   description String?
-  category    String   // POLICY, RESEARCH, REPORT, GUIDELINE, MAP, STATISTICAL
+  category    String
   fileUrl     String
   fileSize    String?
-  fileType    String?  // PDF, DOC, XLS, etc.
+  fileType    String?
   thumbnail   String?
   downloads   Int      @default(0)
   publishedAt DateTime @default(now())
@@ -250,21 +242,19 @@ model Statistic {
   year      Int?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
   @@index([active, order])
 }
 
 model Partner {
-  id          String   @id @default(cuid())
-  name        String
-  logo        String
-  website     String?
-  category    String?
-  order       Int      @default(0)
-  active      Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
+  id        String   @id @default(cuid())
+  name      String
+  logo      String
+  website   String?
+  category  String?
+  order     Int      @default(0)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   @@index([active, order])
 }
 
@@ -272,12 +262,11 @@ model FAQ {
   id        String   @id @default(cuid())
   question  String
   answer    String
-  category  String   // GENERAL, SERVICES, PROJECTS, CAREERS
+  category  String
   order     Int      @default(0)
   active    Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
   @@index([active, category, order])
 }
 
@@ -288,8 +277,8 @@ model Feedback {
   phone     String?
   subject   String
   message   String
-  type      String   // COMPLAINT, SUGGESTION, INQUIRY, COMPLIMENT
-  status    String   @default("NEW") // NEW, REVIEWED, RESOLVED
+  type      String
+  status    String   @default("NEW")
   response  String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -304,7 +293,6 @@ model QuickLink {
   active    Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
   @@index([active, order])
 }
 
@@ -319,7 +307,6 @@ model HeroSlide {
   active     Boolean  @default(true)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
-
   @@index([active, order])
 }
 
@@ -332,6 +319,5 @@ model FeaturedVideo {
   active     Boolean  @default(true)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
-
   @@index([active, order])
 }
